@@ -295,33 +295,61 @@ function removeItem(index){
 
 }
 
-function save(){
+if(file){
 
-  const hotel=document.getElementById("hotel").value.trim();
+  const img = new Image();
 
-  if(hotel===""){
+  const reader = new FileReader();
 
-    alert("ホテル名を入力してください");
+  reader.onload = e => {
 
-    return;
+    img.onload = () => {
 
-  }
+      const canvas = document.createElement("canvas");
 
-  const record={
+      const max = 1280;
 
-    hotel:hotel,
+      let w = img.width;
 
-    date:document.getElementById("date").value,
+      let h = img.height;
 
-    memo:document.getElementById("memo").value,
+      if(w > h && w > max){
 
-    photo:""
+        h = h * max / w;
+
+        w = max;
+
+      }else if(h > max){
+
+        w = w * max / h;
+
+        h = max;
+
+      }
+
+      canvas.width = w;
+
+      canvas.height = h;
+
+      canvas.getContext("2d").drawImage(img,0,0,w,h);
+
+      record.photo = canvas.toDataURL("image/jpeg",0.7);
+
+      finish();
+
+    };
+
+    img.src = e.target.result;
 
   };
 
-  const data=getData();
+  reader.readAsDataURL(file);
 
-  const file=document.getElementById("photo").files[0];
+}else{
+
+  finish();
+
+}
 
   function finish(){
 
