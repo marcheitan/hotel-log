@@ -18,7 +18,7 @@ body{
 
   margin:0;
 
-  font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;
+  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
 
   background:#f3f4f6;
 
@@ -30,9 +30,9 @@ header{
 
   color:#fff;
 
-  padding:18px;
-
   text-align:center;
+
+  padding:18px;
 
 }
 
@@ -50,7 +50,7 @@ main{
 
   background:#fff;
 
-  border-radius:14px;
+  border-radius:12px;
 
   padding:16px;
 
@@ -66,7 +66,7 @@ label{
 
   margin-top:12px;
 
-  font-weight:600;
+  font-weight:bold;
 
 }
 
@@ -78,9 +78,9 @@ input,textarea{
 
   margin-top:6px;
 
-  border:1px solid #d1d5db;
+  border:1px solid #ccc;
 
-  border-radius:10px;
+  border-radius:8px;
 
   font-size:16px;
 
@@ -94,11 +94,11 @@ button{
 
   margin-top:16px;
 
-  padding:13px;
+  padding:12px;
 
   border:none;
 
-  border-radius:10px;
+  border-radius:8px;
 
   background:#2563eb;
 
@@ -110,47 +110,37 @@ button{
 
 }
 
-.entry{
-
-  border-top:1px solid #e5e7eb;
-
-  padding-top:14px;
-
-  margin-top:14px;
-
-}
-
-.entry img{
-
-  width:100%;
-
-  border-radius:10px;
-
-  margin-top:10px;
-
-}
-
-.meta{
-
-  color:#6b7280;
-
-  font-size:14px;
-
-}
-
 .del{
 
   background:#dc2626;
 
 }
 
-.empty{
+.item{
 
-  color:#6b7280;
+  border-top:1px solid #ddd;
+
+  margin-top:14px;
+
+  padding-top:14px;
+
+}
+
+.item img{
+
+  width:100%;
+
+  border-radius:8px;
+
+  margin-top:8px;
+
+}
+
+.empty{
 
   text-align:center;
 
-  padding:20px;
+  color:#666;
 
 }
 
@@ -162,9 +152,9 @@ button{
 
 <header>
 
-  <h2>HOTEL LOG</h2>
+<h2>HOTEL LOG</h2>
 
-  <div>写真保存対応版</div>
+<p>写真保存対応版</p>
 
 </header>
 
@@ -172,33 +162,33 @@ button{
 
 <div class="card">
 
-  <h3>新規登録</h3>
+<h3>新規登録</h3>
 
-  <label>ホテル名</label>
+<label>ホテル名</label>
 
-  <input id="hotel" placeholder="ホテル名">
+<input id="hotel" placeholder="ホテル名">
 
-  <label>利用日</label>
+<label>利用日</label>
 
-  <input id="date" type="date">
+<input id="date" type="date">
 
-  <label>メモ</label>
+<label>メモ</label>
 
-  <textarea id="memo" rows="4"></textarea>
+<textarea id="memo" rows="4"></textarea>
 
-  <label>写真</label>
+<label>写真</label>
 
-  <input id="photo" type="file" accept="image/*">
+<input id="photo" type="file" accept="image/*">
 
-  <button id="saveBtn">保存する</button>
+<button onclick="save()">保存する</button>
 
 </div>
 
 <div class="card">
 
-  <h3>履歴</h3>
+<h3>履歴</h3>
 
-  <div id="list"></div>
+<div id="list"></div>
 
 </div>
 
@@ -206,19 +196,7 @@ button{
 
 <script>
 
-const KEY="hotel_log_v2";
-
-const hotel=document.getElementById("hotel");
-
-const date=document.getElementById("date");
-
-const memo=document.getElementById("memo");
-
-const photo=document.getElementById("photo");
-
-const list=document.getElementById("list");
-
-document.getElementById("saveBtn").addEventListener("click",save);
+const KEY="hotel_log_v3";
 
 function getData(){
 
@@ -232,79 +210,74 @@ function setData(data){
 
 }
 
-function clearForm(){
+function escapeHtml(str){
 
-  hotel.value="";
+  return (str||"")
 
-  date.value="";
+    .replace(/&/g,"&amp;")
 
-  memo.value="";
+    .replace(/</g,"&lt;")
 
-  photo.value="";
+    .replace(/>/g,"&gt;");
 
 }
 
-function save(){
+function clearForm(){
 
-  if(hotel.value.trim()===""){
+  document.getElementById("hotel").value="";
 
-    alert("ホテル名を入力してください");
+  document.getElementById("date").value="";
+
+  document.getElementById("memo").value="";
+
+  document.getElementById("photo").value="";
+
+}
+function load(){
+
+  const data=getData();
+
+  const list=document.getElementById("list");
+
+  list.innerHTML="";
+
+  if(data.length===0){
+
+    list.innerHTML='<div class="empty">まだ記録はありません</div>';
 
     return;
 
   }
 
-  const data=getData();
+  [...data].reverse().forEach((r,i)=>{
 
-  const record={
+    const index=data.length-1-i;
 
-    hotel:hotel.value.trim(),
+    const div=document.createElement("div");
 
-    date:date.value,
+    div.className="item";
 
-    memo:memo.value,
+    div.innerHTML=`
 
-    photo:""
+      <strong>${escapeHtml(r.hotel)}</strong><br>
 
-  };
+      <small>${r.date||""}</small>
 
-  const file=photo.files[0];
+      <div style="white-space:pre-wrap;margin-top:8px;">
 
-  if(file){
+        ${escapeHtml(r.memo)}
 
-    const reader=new FileReader();
+      </div>
 
-    reader.onload=function(e){
+      ${r.photo ? `<img src="${r.photo}">` : ""}
 
-      record.photo=e.target.result;
+      <button class="del" onclick="removeItem(${index})">削除</button>
 
-      data.push(record);
+    `;
 
-      setData(data);
+    list.appendChild(div);
 
-      clearForm();
-
-      load();
-
-      alert("保存しました");
-
-    };
-
-    reader.readAsDataURL(file);
-
-  }else{
-
-    data.push(record);
-
-    setData(data);
-
-    clearForm();
-
-    load();
-
-    alert("保存しました");
-
-  }
+  });
 
 }
 
@@ -322,57 +295,67 @@ function removeItem(index){
 
 }
 
-function load(){
+function save(){
 
-  const data=getData();
+  const hotel=document.getElementById("hotel").value.trim();
 
-  if(data.length===0){
+  if(hotel===""){
 
-    list.innerHTML='<div class="empty">まだ記録はありません</div>';
+    alert("ホテル名を入力してください");
 
     return;
 
   }
 
-  list.innerHTML="";
+  const record={
 
-  [...data].reverse().forEach((r,revIndex)=>{
+    hotel:hotel,
 
-    const realIndex=data.length-1-revIndex;
+    date:document.getElementById("date").value,
 
-    const div=document.createElement("div");
+    memo:document.getElementById("memo").value,
 
-    div.className="entry";
+    photo:""
 
-    div.innerHTML=`
+  };
 
-      <strong>${escapeHtml(r.hotel)}</strong><br>
+  const data=getData();
 
-      <div class="meta">${r.date||""}</div>
+  const file=document.getElementById("photo").files[0];
 
-      <div style="margin-top:8px;white-space:pre-wrap;">${escapeHtml(r.memo)}</div>
+  function finish(){
 
-      ${r.photo?`<img src="${r.photo}">`:""}
+    data.push(record);
 
-      <button class="del" onclick="removeItem(${realIndex})">削除</button>
+    setData(data);
 
-    `;
+    clearForm();
 
-    list.appendChild(div);
+    load();
 
-  });
+    alert("保存しました");
 
-}
+  }
 
-function escapeHtml(text){
+  if(file){
 
-  return (text||"")
+    const reader=new FileReader();
 
-    .replace(/&/g,"&amp;")
+    reader.onload=function(e){
 
-    .replace(/</g,"&lt;")
+      record.photo=e.target.result;
 
-    .replace(/>/g,"&gt;");
+      finish();
+
+    };
+
+    reader.readAsDataURL(file);
+
+  }else{
+
+    finish();
+
+  }
 
 }
 
