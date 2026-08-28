@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 
 <html lang="ja">
@@ -7,7 +6,7 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
 <title>Hotel Log</title>
 
@@ -15,161 +14,205 @@
 
 :root{
 
-  --bg:#F5F7FB;
+ --bg:#f5f7fb;
 
-  --card:#FFFFFF;
+ --card:#fff;
 
-  --blue:#2563EB;
+ --blue:#2563eb;
 
-  --text:#111827;
+ --red:#ef4444;
 
-  --sub:#6B7280;
+ --text:#111827;
+
+ --sub:#6b7280;
 
 }
 
-*{margin:0;padding:0;box-sizing:border-box;}
+*{margin:0;padding:0;box-sizing:border-box}
 
 body{
 
-  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+ font-family:-apple-system,BlinkMacSystemFont,sans-serif;
 
-  background:var(--bg);
+ background:var(--bg);
 
-  color:var(--text);
+ color:var(--text);
 
 }
 
 header{
 
-  background:linear-gradient(135deg,#2563EB,#7C3AED);
+ background:linear-gradient(135deg,#2563eb,#7c3aed);
 
-  color:#fff;
+ color:#fff;
 
-  padding:24px 20px;
+ padding:26px 20px;
 
-  border-radius:0 0 24px 24px;
+ border-radius:0 0 26px 26px;
 
 }
 
-.container{padding:16px;}
+.container{padding:16px}
 
 .card{
 
-  background:var(--card);
+ background:#fff;
 
-  border-radius:18px;
+ border-radius:18px;
 
-  padding:16px;
+ padding:16px;
 
-  margin-bottom:16px;
+ margin-bottom:16px;
 
-  box-shadow:0 4px 12px rgba(0,0,0,.08);
-
-}
-
-.row{
-
-  display:flex;
-
-  justify-content:space-between;
-
-  align-items:center;
+ box-shadow:0 4px 12px rgba(0,0,0,.08);
 
 }
+
+.row{display:flex;justify-content:space-between;align-items:center}
 
 .grid{
 
-  display:grid;
+ display:grid;
 
-  grid-template-columns:1fr 1fr;
+ grid-template-columns:1fr 1fr;
 
-  gap:10px;
+ gap:10px;
 
-  margin-top:14px;
+ margin-top:12px;
 
 }
 
 .stat{
 
-  background:#F9FAFB;
+ background:#f9fafb;
 
-  border-radius:12px;
+ border-radius:14px;
 
-  padding:12px;
+ padding:12px;
 
-  text-align:center;
+ text-align:center;
 
 }
 
 .stat b{
 
-  display:block;
+ display:block;
 
-  color:var(--blue);
+ font-size:22px;
 
-  font-size:22px;
+ color:var(--blue);
 
 }
 
 .small{
 
-  font-size:13px;
+ color:var(--sub);
 
-  color:var(--sub);
+ font-size:13px;
+
+ margin-top:10px;
 
 }
 
 input,textarea{
 
-  width:100%;
+ width:100%;
 
-  padding:12px;
+ border:1px solid #ddd;
 
-  margin-top:6px;
+ border-radius:12px;
 
-  border:1px solid #DDD;
+ padding:12px;
 
-  border-radius:12px;
+ font-size:16px;
 
-  font-size:16px;
+ margin-top:6px;
 
 }
 
 button{
 
-  width:100%;
+ width:100%;
 
-  padding:14px;
+ border:none;
 
-  margin-top:12px;
+ border-radius:14px;
 
-  border:none;
+ padding:14px;
 
-  border-radius:14px;
+ color:#fff;
 
-  background:var(--blue);
+ font-size:16px;
 
-  color:#fff;
+ font-weight:bold;
 
-  font-size:16px;
+ margin-top:12px;
 
-  font-weight:bold;
+ background:var(--blue);
 
 }
 
-.delete{
+.delete{background:var(--red)}
 
-  background:#EF4444;
+.edit{background:#f59e0b}
+
+.photos{
+
+ display:grid;
+
+ grid-template-columns:repeat(3,1fr);
+
+ gap:8px;
+
+ margin-top:10px;
+
+}
+
+.photos img{
+
+ width:100%;
+
+ aspect-ratio:1;
+
+ object-fit:cover;
+
+ border-radius:10px;
 
 }
 
 .item{
 
-  border-top:1px solid #EEE;
+ border-top:1px solid #eee;
 
-  padding-top:12px;
+ padding-top:14px;
 
-  margin-top:12px;
+ margin-top:14px;
+
+}
+
+#viewer{
+
+ position:fixed;
+
+ inset:0;
+
+ background:rgba(0,0,0,.9);
+
+ display:none;
+
+ justify-content:center;
+
+ align-items:center;
+
+ z-index:999;
+
+}
+
+#viewer img{
+
+ max-width:95%;
+
+ max-height:90%;
 
 }
 
@@ -181,9 +224,9 @@ button{
 
 <header>
 
-  <h1>🏨 Hotel Log</h1>
+<h1>🏨 Hotel Log</h1>
 
-  <p>旅の思い出を残そう</p>
+<p>旅の思い出を残そう</p>
 
 </header>
 
@@ -191,167 +234,292 @@ button{
 
 <div class="card">
 
-  <div class="row">
+<div class="row">
 
-    <div>
+<div>
 
-      <div class="small">総宿泊数</div>
+<div class="small">総宿泊数</div>
 
-      <h2 id="stayCount">0</h2>
+<h2 id="stayCount">0</h2>
 
-    </div>
+</div>
 
-    <div>
+<div>
 
-      <div class="small">都市</div>
+<div class="small">都市</div>
 
-      <h2 id="cityCount">0</h2>
+<h2 id="cityCount">0</h2>
 
-    </div>
+</div>
 
-  </div>
+</div>
 
-  <div class="grid">
+<div class="grid">
 
-    <div class="stat">
+<div class="stat">
 
-      <b id="hotelCount">0</b>
+<b id="hotelCount">0</b>
 
-      ホテル
+ホテル
 
-    </div>
+</div>
 
-    <div class="stat">
+<div class="stat">
 
-      <b id="photoCount">0</b>
+<b id="photoCount">0</b>
 
-      写真
+写真
 
-    </div>
+</div>
 
-  </div>
+</div>
 
 </div>
 
 <div class="card">
 
-  <h3>➕ 新しい思い出</h3>
+<h3 id="formTitle">➕ 新しい思い出</h3>
 
-  <div class="small">日付</div>
+<div class="small">日付</div>
 
-  <input type="date" id="date">
+<input type="date" id="date">
 
-  <div class="small">ホテル名</div>
+<div class="small">ホテル名</div>
 
-  <input id="hotel" placeholder="ホテル名">
+<input id="hotel" placeholder="ホテル名">
 
-  <div class="small">都市</div>
+<div class="small">都市</div>
 
-  <input id="city" placeholder="京都市">
+<input id="city" placeholder="京都市">
 
-  <div class="small">今日の一言</div>
+<div class="small">今日の一言</div>
 
-  <textarea id="diary" rows="3" placeholder="思い出を書こう"></textarea>
-<label>写真</label>
+<textarea id="diary" rows="3" placeholder="思い出を書こう"></textarea>
 
-<input id="photo" type="file" accept="image/*">
+<div class="small">写真（複数可）</div>
 
-<img id="preview" style="display:none;width:100%;margin-top:10px;border-radius:12px;">
-  <button onclick="addStay()">保存</button>
+<input type="file" id="photo" accept="image/*" multiple>
+
+<div id="preview" class="photos"></div>
+
+<button id="saveBtn">保存</button>
 
 </div>
 
 <div class="card">
 
-  <h3>📖 最近の思い出</h3>
+<h3>📖 最近の思い出</h3>
 
-  <div id="list"></div>
+<div id="list"></div>
 
 </div>
+
+</div>
+
+<div id="viewer" onclick="closeViewer()">
+
+<img id="bigImg">
 
 </div>
 
 <script>
 
-const KEY="hotel_log_v1";
+const KEY="hotel_log_v2";
 
 let db={stays:[]};
 
-function save(){
+let editId=null;
 
-  localStorage.setItem(KEY,JSON.stringify(db));
+let photos=[];
+
+const dateEl=document.getElementById("date");
+
+const hotelEl=document.getElementById("hotel");
+
+const cityEl=document.getElementById("city");
+
+const diaryEl=document.getElementById("diary");
+
+dateEl.valueAsDate=new Date();
+
+document.getElementById("photo").addEventListener("change",e=>{
+
+ const files=[...e.target.files];
+
+ files.forEach(f=>{
+
+  const r=new FileReader();
+
+  r.onload=()=>{
+
+   photos.push(r.result);
+
+   drawPreview();
+
+  };
+
+  r.readAsDataURL(f);
+
+ });
+
+});
+
+function drawPreview(){
+
+ const p=document.getElementById("preview");
+
+ p.innerHTML=photos.map(x=>`<img src="${x}">`).join("");
 
 }
 
-function load(){
+function saveDB(){
 
-  const data=localStorage.getItem(KEY);
-
-  if(data){
-
-    db=JSON.parse(data);
-
-  }
-
-  render();
+ localStorage.setItem(KEY,JSON.stringify(db));
 
 }
 
-function addStay(){
+function loadDB(){
 
-  const hotel=document.getElementById("hotel").value.trim();
+ const d=localStorage.getItem(KEY);
 
-  const city=document.getElementById("city").value.trim();
+ if(d) db=JSON.parse(d);
 
-  const date=document.getElementById("date").value;
+ render();
 
-  const diary=document.getElementById("diary").value.trim();
+}
 
-  if(!hotel || !date){
+function saveStay(){
 
-    alert("日付とホテル名を入力してください");
+ const date=dateEl.value;
 
-    return;
+ const hotel=hotelEl.value.trim();
 
-  }
+ const city=cityEl.value.trim();
+
+ const diary=diaryEl.value.trim();
+
+ if(!date||!hotel){
+
+  alert("日付とホテル名を入力してください");
+
+  return;
+
+ }
+
+ if(editId){
+
+  const s=db.stays.find(x=>x.id===editId);
+
+  s.date=date;
+
+  s.hotel=hotel;
+
+  s.city=city;
+
+  s.diary=diary;
+
+  s.photos=photos;
+
+ }else{
 
   db.stays.unshift({
 
-    id:Date.now(),
+   id:Date.now(),
 
-    hotel,
+   date,
 
-    city,
+   hotel,
 
-    date,
+   city,
 
-    diary
+   diary,
+
+   photos
 
   });
 
-  save();
+ }
 
-  document.getElementById("hotel").value="";
+ saveDB();
 
-  document.getElementById("city").value="";
+ resetForm();
 
-  document.getElementById("date").value="";
-
-  document.getElementById("diary").value="";
-
-  render();
+ render();
 
 }
 
-function del(id){
+document.getElementById("saveBtn").onclick=saveStay;
+function resetForm(){
+
+  editId=null;
+
+  document.getElementById("formTitle").textContent="➕ 新しい思い出";
+
+  dateEl.valueAsDate=new Date();
+
+  hotelEl.value="";
+
+  cityEl.value="";
+
+  diaryEl.value="";
+
+  photos=[];
+
+  document.getElementById("photo").value="";
+
+  drawPreview();
+
+}
+
+function editStay(id){
+
+  const s=db.stays.find(x=>x.id===id);
+
+  if(!s) return;
+
+  editId=id;
+
+  document.getElementById("formTitle").textContent="✏️ 思い出を編集";
+
+  dateEl.value=s.date;
+
+  hotelEl.value=s.hotel;
+
+  cityEl.value=s.city;
+
+  diaryEl.value=s.diary;
+
+  photos=[...(s.photos||[])];
+
+  drawPreview();
+
+  window.scrollTo({top:0,behavior:"smooth"});
+
+}
+
+function delStay(id){
 
   if(!confirm("削除しますか？")) return;
 
   db.stays=db.stays.filter(x=>x.id!==id);
 
-  save();
+  saveDB();
 
   render();
+
+}
+
+function openViewer(src){
+
+  document.getElementById("viewer").style.display="flex";
+
+  document.getElementById("bigImg").src=src;
+
+}
+
+function closeViewer(){
+
+  document.getElementById("viewer").style.display="none";
 
 }
 
@@ -361,19 +529,21 @@ function render(){
 
   document.getElementById("cityCount").textContent=
 
-    new Set(db.stays.map(x=>x.city)).size;
+    new Set(db.stays.map(x=>x.city).filter(Boolean)).size;
 
   document.getElementById("hotelCount").textContent=
 
     new Set(db.stays.map(x=>x.hotel)).size;
 
-  document.getElementById("photoCount").textContent="0";
+  document.getElementById("photoCount").textContent=
+
+    db.stays.reduce((n,x)=>n+(x.photos?.length||0),0);
 
   const list=document.getElementById("list");
 
   if(db.stays.length===0){
 
-    list.innerHTML="<p class='small'>まだ登録がありません</p>";
+    list.innerHTML="<p>まだ登録がありません</p>";
 
     return;
 
@@ -387,15 +557,47 @@ function render(){
 
         <b>${x.hotel}</b>
 
-        <span class="small">${x.date}</span>
+        <small>${x.date}</small>
 
       </div>
 
-      <div class="small">${x.city||""}</div>
+      <div style="color:#666;margin:4px 0">
 
-      <div style="margin:8px 0">${x.diary||""}</div>
+        📍 ${x.city||"-"}
 
-      <button class="delete" onclick="del(${x.id})">削除</button>
+      </div>
+
+      <div style="margin:8px 0">
+
+        ${x.diary||""}
+
+      </div>
+
+      <div class="photos">
+
+        ${(x.photos||[]).map(p=>`
+
+          <img src="${p}" onclick="openViewer('${p}')">
+
+        `).join("")}
+
+      </div>
+
+      <div class="row" style="gap:8px;margin-top:10px">
+
+        <button class="edit" onclick="editStay(${x.id})">
+
+          編集
+
+        </button>
+
+        <button class="delete" onclick="delStay(${x.id})">
+
+          削除
+
+        </button>
+
+      </div>
 
     </div>
 
@@ -403,150 +605,10 @@ function render(){
 
 }
 
-load();
-
-</script>
-<script>
-
-const oldSave = save;
-
-save = function(){
-
-  oldSave();
-
-  location.reload();
-
-};
-
-window.addEventListener("load", ()=>{
-
-  document.getElementById("date").valueAsDate = new Date();
-
-});
-
-</script>
-<script>
-
-const photo=document.getElementById("photo");
-
-const preview=document.getElementById("preview");
-
-let photoData="";
-
-photo.onchange=e=>{
-
- const f=e.target.files[0];
-
- if(!f) return;
-
- const r=new FileReader();
-
- r.onload=()=>{
-
-   photoData=r.result;
-
-   preview.src=photoData;
-
-   preview.style.display="block";
-
- };
-
- r.readAsDataURL(f);
-
-};
-
-const oldAdd=addStay;
-
-addStay=function(){
-
- if(!document.getElementById("date").value||!document.getElementById("hotel").value){
-
-   alert("日付とホテル名を入力してください");
-
-   return;
-
- }
-
- db.stays.unshift({
-
-   date:date.value,
-
-   hotel:hotel.value,
-
-   city:city.value,
-
-   diary:diary.value,
-
-   photo:photoData
-
- });
-
- save(); render();
-
- photoData="";
-
- preview.style.display="none";
-
- preview.src="";
-
- photo.value="";
-
- date.value=""; hotel.value=""; city.value=""; diary.value="";
-
-};
+loadDB();
 
 </script>
 
-<script>
+</body>
 
-const KEY="hotel-log-v1";
-
-const date=document.querySelector('input[type="date"]');
-
-const hotel=document.querySelector('input[placeholder="ホテル名"]');
-
-const city=document.querySelector('input[placeholder="京都市"]');
-
-const note=document.querySelector('textarea');
-
-const btn=document.querySelector('button');
-
-(function(){
-
- const s=localStorage.getItem(KEY);
-
- if(!s)return;
-
- const d=JSON.parse(s);
-
- if(date)date.value=d.date||"";
-
- if(hotel)hotel.value=d.hotel||"";
-
- if(city)city.value=d.city||"";
-
- if(note)note.value=d.note||"";
-
-})();
-
-btn.addEventListener("click",e=>{
-
- e.preventDefault();
-
- localStorage.setItem(KEY,JSON.stringify({
-
-  date:date?.value||"",
-
-  hotel:hotel?.value||"",
-
-  city:city?.value||"",
-
-  note:note?.value||""
-
- }));
-
- alert("保存しました");
-
-});
-
-</script>
+</html>
