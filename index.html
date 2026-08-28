@@ -402,7 +402,59 @@ function render(){
 load();
 
 </script>
+<script>
 
+const KEY = "hotel-log-data-v2";
+
+function save(){
+
+  const data = {
+
+    date: document.getElementById("date").value,
+
+    hotel: document.getElementById("hotel").value,
+
+    city: document.getElementById("city").value,
+
+    note: document.getElementById("note").value
+
+  };
+
+  localStorage.setItem(KEY, JSON.stringify(data));
+
+  alert("保存しました");
+
+}
+
+function load(){
+
+  const s = localStorage.getItem(KEY);
+
+  if(!s) return;
+
+  const d = JSON.parse(s);
+
+  document.getElementById("date").value = d.date || "";
+
+  document.getElementById("hotel").value = d.hotel || "";
+
+  document.getElementById("city").value = d.city || "";
+
+  document.getElementById("note").value = d.note || "";
+
+}
+
+window.addEventListener("load", load);
+
+document.querySelector("button").onclick = function(e){
+
+  e.preventDefault();
+
+  save();
+
+};
+
+</script>
 </body>
 
 </html>
