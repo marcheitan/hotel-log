@@ -1,3 +1,70 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ホテルログ</title>
+<style>
+body{font-family:-apple-system,sans-serif;background:#eef3f9;margin:0}
+header{background:#2563eb;color:#fff;padding:16px}
+main{max-width:720px;margin:auto;padding:16px}
+.card{background:#fff;border-radius:14px;padding:12px;margin-bottom:12px}
+input,textarea{width:100%;padding:10px;margin:6px 0;border:1px solid #ccc;border-radius:8px;box-sizing:border-box}
+button{width:100%;padding:11px;background:#2563eb;color:#fff;border:0;border-radius:8px}
+.row{display:flex;justify-content:space-between}
+.small{color:#64748b;font-size:12px}
+</style>
+</head>
+<body>
+<header>
+<h2>🏨 ホテルログ v1.0</h2>
+<div id="sum">0泊 ¥0</div>
+</header>
+
+<main>
+<div class="card">
+<h3>宿泊登録</h3>
+<input id="d" type="date">
+<input id="h" placeholder="ホテル名">
+<input id="p" type="number" placeholder="料金">
+<textarea id="m" placeholder="メモ"></textarea>
+<button onclick="add()">登録</button>
+</div>
+
+<div class="card">
+<input id="q" placeholder="ホテル検索" oninput="render()">
+</div>
+
+<div id="list"></div>
+</main>
+
+<script>
+const KEY='hotel-log-v1';
+let db=JSON.parse(localStorage.getItem(KEY)||'[]');
+
+function save(){
+ localStorage.setItem(KEY,JSON.stringify(db));
+ render();
+}
+
+function add(){
+ if(!d.value||!h.value)return alert('日付とホテル名を入力');
+ db.unshift({
+  id:Date.now(),
+  date:d.value,
+  hotel:h.value,
+  price:+p.value||0,
+  memo:m.value
+ });
+ d.value=h.value=p.value=m.value='';
+ save();
+}
+
+function del(id){
+ db=db.filter(x=>x.id!==id);
+ save();
+}
+
 function render(){
  const qv=q.value.toLowerCase();
  const rows=db.filter(x=>x.hotel.toLowerCase().includes(qv));
