@@ -606,7 +606,13 @@ function render(){
 }
 
 loadDB();
+document.getElementById("saveBtn").onclick = saveStay;
 
+window.addEventListener("load",()=>{
+
+  document.getElementById("date").valueAsDate = new Date();
+
+});
 </script>
 
 </body>
