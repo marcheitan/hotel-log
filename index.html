@@ -402,7 +402,25 @@ function render(){
 load();
 
 </script>
+<script>
 
+const oldSave = save;
+
+save = function(){
+
+  oldSave();
+
+  location.reload();
+
+};
+
+window.addEventListener("load", ()=>{
+
+  document.getElementById("date").valueAsDate = new Date();
+
+});
+
+</script>
 
 
 <script>
