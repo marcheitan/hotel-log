@@ -22,6 +22,8 @@
 
  --red:#ef4444;
 
+ --green:#16a34a;
+
  --text:#111827;
 
  --sub:#6b7280;
@@ -155,6 +157,18 @@ button{
 .delete{background:var(--red)}
 
 .edit{background:#f59e0b}
+
+.savePhoto{
+
+ background:var(--green);
+
+ padding:8px;
+
+ font-size:12px;
+
+ margin-top:4px;
+
+}
 
 .photos{
 
@@ -449,169 +463,182 @@ function saveStay(){
 }
 
 document.getElementById("saveBtn").onclick=saveStay;
+
 function resetForm(){
 
-  editId=null;
+ editId=null;
 
-  document.getElementById("formTitle").textContent="➕ 新しい思い出";
+ document.getElementById("formTitle").textContent="➕ 新しい思い出";
 
-  dateEl.valueAsDate=new Date();
+ dateEl.valueAsDate=new Date();
 
-  hotelEl.value="";
+ hotelEl.value="";
 
-  cityEl.value="";
+ cityEl.value="";
 
-  diaryEl.value="";
+ diaryEl.value="";
 
-  photos=[];
+ photos=[];
 
-  document.getElementById("photo").value="";
+ document.getElementById("photo").value="";
 
-  drawPreview();
+ drawPreview();
 
 }
 
 function editStay(id){
 
-  const s=db.stays.find(x=>x.id===id);
+ const s=db.stays.find(x=>x.id===id);
 
-  if(!s) return;
+ if(!s) return;
 
-  editId=id;
+ editId=id;
 
-  document.getElementById("formTitle").textContent="✏️ 思い出を編集";
+ document.getElementById("formTitle").textContent="✏️ 思い出を編集";
 
-  dateEl.value=s.date;
+ dateEl.value=s.date;
 
-  hotelEl.value=s.hotel;
+ hotelEl.value=s.hotel;
 
-  cityEl.value=s.city;
+ cityEl.value=s.city;
 
-  diaryEl.value=s.diary;
+ diaryEl.value=s.diary;
 
-  photos=[...(s.photos||[])];
+ photos=[...(s.photos||[])];
 
-  drawPreview();
+ drawPreview();
 
-  window.scrollTo({top:0,behavior:"smooth"});
+ window.scrollTo({top:0,behavior:"smooth"});
 
 }
 
 function delStay(id){
 
-  if(!confirm("削除しますか？")) return;
+ if(!confirm("削除しますか？")) return;
 
-  db.stays=db.stays.filter(x=>x.id!==id);
+ db.stays=db.stays.filter(x=>x.id!==id);
 
-  saveDB();
+ saveDB();
 
-  render();
+ render();
 
 }
 
 function openViewer(src){
 
-  document.getElementById("viewer").style.display="flex";
+ document.getElementById("viewer").style.display="flex";
 
-  document.getElementById("bigImg").src=src;
+ document.getElementById("bigImg").src=src;
 
 }
 
 function closeViewer(){
 
-  document.getElementById("viewer").style.display="none";
+ document.getElementById("viewer").style.display="none";
+
+}
+
+function saveImage(src){
+
+ const a=document.createElement("a");
+
+ a.href=src;
+
+ a.download="hotel-photo.jpg";
+
+ a.click();
 
 }
 
 function render(){
 
-  document.getElementById("stayCount").textContent=db.stays.length;
+ document.getElementById("stayCount").textContent=db.stays.length;
 
-  document.getElementById("cityCount").textContent=
+ document.getElementById("cityCount").textContent=
 
-    new Set(db.stays.map(x=>x.city).filter(Boolean)).size;
+ new Set(db.stays.map(x=>x.city).filter(Boolean)).size;
 
-  document.getElementById("hotelCount").textContent=
+ document.getElementById("hotelCount").textContent=
 
-    new Set(db.stays.map(x=>x.hotel)).size;
+ new Set(db.stays.map(x=>x.hotel)).size;
 
-  document.getElementById("photoCount").textContent=
+ document.getElementById("photoCount").textContent=
 
-    db.stays.reduce((n,x)=>n+(x.photos?.length||0),0);
+ db.stays.reduce((n,x)=>n+(x.photos?.length||0),0);
 
-  const list=document.getElementById("list");
+ const list=document.getElementById("list");
 
-  if(db.stays.length===0){
+ if(db.stays.length===0){
 
-    list.innerHTML="<p>まだ登録がありません</p>";
+  list.innerHTML="<p>まだ登録がありません</p>";
 
-    return;
+  return;
 
-  }
+ }
 
-  list.innerHTML=db.stays.map(x=>`
+ list.innerHTML=db.stays.map(x=>`
 
-    <div class="item">
+ <div class="item">
 
-      <div class="row">
+ <div class="row">
 
-        <b>${x.hotel}</b>
+ <b>${x.hotel}</b>
 
-        <small>${x.date}</small>
+ <small>${x.date}</small>
 
-      </div>
+ </div>
 
-      <div style="color:#666;margin:4px 0">
+ <div style="color:#666;margin:4px 0">
 
-        📍 ${x.city||"-"}
+ 📍 ${x.city||"-"}
 
-      </div>
+ </div>
 
-      <div style="margin:8px 0">
+ <div style="margin:8px 0">
 
-        ${x.diary||""}
+ ${x.diary||""}
 
-      </div>
+ </div>
 
-      <div class="photos">
+ <div class="photos">
 
-        ${(x.photos||[]).map(p=>`
+ ${(x.photos||[]).map(p=>`
 
-          <img src="${p}" onclick="openViewer('${p}')">
+ <div>
 
-        `).join("")}
+ <img src="${p}" onclick="openViewer('${p}')">
 
-      </div>
+ <button class="savePhoto" onclick="saveImage('${p}')">
 
-      <div class="row" style="gap:8px;margin-top:10px">
+ 保存
 
-        <button class="edit" onclick="editStay(${x.id})">
+ </button>
 
-          編集
+ </div>
 
-        </button>
+ `).join("")}
 
-        <button class="delete" onclick="delStay(${x.id})">
+ </div>
 
-          削除
+ <div class="row" style="gap:8px;margin-top:10px">
 
-        </button>
+ <button class="edit" onclick="editStay(${x.id})">編集</button>
 
-      </div>
+ <button class="delete" onclick="delStay(${x.id})">削除</button>
 
-    </div>
+ </div>
 
-  `).join("");
+ </div>
+
+ `).join("");
 
 }
 
-loadDB();
-
-document.getElementById("saveBtn").onclick =
-
 window.addEventListener("load",()=>{
 
-  document.getElementById("date").valueAsDate = new Date();
+ document.getElementById("date").valueAsDate=new Date();
+
+ loadDB();
 
 });
 
@@ -620,4 +647,3 @@ window.addEventListener("load",()=>{
 </body>
 
 </html>
-
