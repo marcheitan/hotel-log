@@ -6,7 +6,7 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>HOTEL LOG</title>
 
@@ -86,8 +86,6 @@ input,textarea{
 
 }
 
-textarea{resize:vertical}
-
 button{
 
   width:100%;
@@ -96,23 +94,17 @@ button{
 
   padding:12px;
 
-  border:none;
-
-  border-radius:8px;
-
   background:#2563eb;
 
   color:#fff;
 
+  border:none;
+
+  border-radius:8px;
+
   font-size:16px;
 
   font-weight:bold;
-
-}
-
-.del{
-
-  background:#dc2626;
 
 }
 
@@ -135,6 +127,8 @@ button{
   margin-top:8px;
 
 }
+
+.del{background:#dc2626}
 
 .empty{
 
@@ -166,7 +160,7 @@ button{
 
 <label>ホテル名</label>
 
-<input id="hotel" placeholder="ホテル名">
+<input id="hotel">
 
 <label>利用日</label>
 
@@ -196,7 +190,7 @@ button{
 
 <script>
 
-const KEY="hotel_log_v3";
+const KEY="hotel_log_v4";
 
 function getData(){
 
@@ -210,9 +204,21 @@ function setData(data){
 
 }
 
-function escapeHtml(str){
+function clearForm(){
 
-  return (str||"")
+  hotel.value="";
+
+  date.value="";
+
+  memo.value="";
+
+  photo.value="";
+
+}
+
+function escapeHtml(s){
+
+  return (s||"")
 
     .replace(/&/g,"&amp;")
 
@@ -222,17 +228,6 @@ function escapeHtml(str){
 
 }
 
-function clearForm(){
-
-  document.getElementById("hotel").value="";
-
-  document.getElementById("date").value="";
-
-  document.getElementById("memo").value="";
-
-  document.getElementById("photo").value="";
-
-}
 function load(){
 
   const data=getData();
@@ -251,7 +246,7 @@ function load(){
 
   [...data].reverse().forEach((r,i)=>{
 
-    const index=data.length-1-i;
+    const idx=data.length-1-i;
 
     const div=document.createElement("div");
 
@@ -263,7 +258,7 @@ function load(){
 
       <small>${r.date||""}</small>
 
-      <div style="white-space:pre-wrap;margin-top:8px;">
+      <div style="white-space:pre-wrap;margin-top:8px">
 
         ${escapeHtml(r.memo)}
 
@@ -271,7 +266,7 @@ function load(){
 
       ${r.photo ? `<img src="${r.photo}">` : ""}
 
-      <button class="del" onclick="removeItem(${index})">削除</button>
+      <button class="del" onclick="removeItem(${idx})">削除</button>
 
     `;
 
@@ -294,66 +289,35 @@ function removeItem(index){
   load();
 
 }
+function save(){
 
-if(file){
+  const hotelName=hotel.value.trim();
 
-  const img = new Image();
+  if(hotelName===""){
 
-  const reader = new FileReader();
+    alert("ホテル名を入力してください");
 
-  reader.onload = e => {
+    return;
 
-    img.onload = () => {
+  }
 
-      const canvas = document.createElement("canvas");
+  const data=getData();
 
-      const max = 1280;
+  const record={
 
-      let w = img.width;
+    hotel:hotelName,
 
-      let h = img.height;
+    date:date.value,
 
-      if(w > h && w > max){
+    memo:memo.value,
 
-        h = h * max / w;
-
-        w = max;
-
-      }else if(h > max){
-
-        w = w * max / h;
-
-        h = max;
-
-      }
-
-      canvas.width = w;
-
-      canvas.height = h;
-
-      canvas.getContext("2d").drawImage(img,0,0,w,h);
-
-      record.photo = canvas.toDataURL("image/jpeg",0.7);
-
-      finish();
-
-    };
-
-    img.src = e.target.result;
+    photo:""
 
   };
 
-  reader.readAsDataURL(file);
+  const file=photo.files[0];
 
-}else{
-
-  finish();
-
-}
-
-function finish(){
-
-  try{
+  const finish=()=>{
 
     data.push(record);
 
@@ -365,35 +329,65 @@ function finish(){
 
     alert("保存しました");
 
-  }catch(e){
+  };
 
-    alert("保存できません。写真が大きすぎます。");
+  if(!file){
+
+    finish();
+
+    return;
 
   }
 
-}
+  const reader=new FileReader();
 
-  }
+  reader.onload=(e)=>{
 
-  if(file){
+    const img=new Image();
 
-    const reader=new FileReader();
+    img.onload=()=>{
 
-    reader.onload=function(e){
+      const canvas=document.createElement("canvas");
 
-      record.photo=e.target.result;
+      const max=800;
+
+      let w=img.width;
+
+      let h=img.height;
+
+      if(w>h && w>max){
+
+        h=Math.round(h*max/w);
+
+        w=max;
+
+      }else if(h>max){
+
+        w=Math.round(w*max/h);
+
+        h=max;
+
+      }
+
+      canvas.width=w;
+
+      canvas.height=h;
+
+      const ctx=canvas.getContext("2d");
+
+      ctx.drawImage(img,0,0,w,h);
+
+      record.photo=canvas.toDataURL("image/jpeg",0.7);
 
       finish();
 
     };
 
-    reader.readAsDataURL(file);
+    img.src=e.target.result;
 
-  }else{
+  };
 
-    finish();
-
-  }
+  reader.readAsDataURL(file);
 
 }
 
