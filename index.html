@@ -1,0 +1,408 @@
+
+<!DOCTYPE html>
+
+<html lang="ja">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Hotel Log</title>
+
+<style>
+
+:root{
+
+  --bg:#F5F7FB;
+
+  --card:#FFFFFF;
+
+  --blue:#2563EB;
+
+  --text:#111827;
+
+  --sub:#6B7280;
+
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+
+  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+
+  background:var(--bg);
+
+  color:var(--text);
+
+}
+
+header{
+
+  background:linear-gradient(135deg,#2563EB,#7C3AED);
+
+  color:#fff;
+
+  padding:24px 20px;
+
+  border-radius:0 0 24px 24px;
+
+}
+
+.container{padding:16px;}
+
+.card{
+
+  background:var(--card);
+
+  border-radius:18px;
+
+  padding:16px;
+
+  margin-bottom:16px;
+
+  box-shadow:0 4px 12px rgba(0,0,0,.08);
+
+}
+
+.row{
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+}
+
+.grid{
+
+  display:grid;
+
+  grid-template-columns:1fr 1fr;
+
+  gap:10px;
+
+  margin-top:14px;
+
+}
+
+.stat{
+
+  background:#F9FAFB;
+
+  border-radius:12px;
+
+  padding:12px;
+
+  text-align:center;
+
+}
+
+.stat b{
+
+  display:block;
+
+  color:var(--blue);
+
+  font-size:22px;
+
+}
+
+.small{
+
+  font-size:13px;
+
+  color:var(--sub);
+
+}
+
+input,textarea{
+
+  width:100%;
+
+  padding:12px;
+
+  margin-top:6px;
+
+  border:1px solid #DDD;
+
+  border-radius:12px;
+
+  font-size:16px;
+
+}
+
+button{
+
+  width:100%;
+
+  padding:14px;
+
+  margin-top:12px;
+
+  border:none;
+
+  border-radius:14px;
+
+  background:var(--blue);
+
+  color:#fff;
+
+  font-size:16px;
+
+  font-weight:bold;
+
+}
+
+.delete{
+
+  background:#EF4444;
+
+}
+
+.item{
+
+  border-top:1px solid #EEE;
+
+  padding-top:12px;
+
+  margin-top:12px;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+  <h1>🏨 Hotel Log</h1>
+
+  <p>旅の思い出を残そう</p>
+
+</header>
+
+<div class="container">
+
+<div class="card">
+
+  <div class="row">
+
+    <div>
+
+      <div class="small">総宿泊数</div>
+
+      <h2 id="stayCount">0</h2>
+
+    </div>
+
+    <div>
+
+      <div class="small">都市</div>
+
+      <h2 id="cityCount">0</h2>
+
+    </div>
+
+  </div>
+
+  <div class="grid">
+
+    <div class="stat">
+
+      <b id="hotelCount">0</b>
+
+      ホテル
+
+    </div>
+
+    <div class="stat">
+
+      <b id="photoCount">0</b>
+
+      写真
+
+    </div>
+
+  </div>
+
+</div>
+
+<div class="card">
+
+  <h3>➕ 新しい思い出</h3>
+
+  <div class="small">日付</div>
+
+  <input type="date" id="date">
+
+  <div class="small">ホテル名</div>
+
+  <input id="hotel" placeholder="ホテル名">
+
+  <div class="small">都市</div>
+
+  <input id="city" placeholder="京都市">
+
+  <div class="small">今日の一言</div>
+
+  <textarea id="diary" rows="3" placeholder="思い出を書こう"></textarea>
+
+  <button onclick="addStay()">保存</button>
+
+</div>
+
+<div class="card">
+
+  <h3>📖 最近の思い出</h3>
+
+  <div id="list"></div>
+
+</div>
+
+</div>
+
+<script>
+
+const KEY="hotel_log_v1";
+
+let db={stays:[]};
+
+function save(){
+
+  localStorage.setItem(KEY,JSON.stringify(db));
+
+}
+
+function load(){
+
+  const data=localStorage.getItem(KEY);
+
+  if(data){
+
+    db=JSON.parse(data);
+
+  }
+
+  render();
+
+}
+
+function addStay(){
+
+  const hotel=document.getElementById("hotel").value.trim();
+
+  const city=document.getElementById("city").value.trim();
+
+  const date=document.getElementById("date").value;
+
+  const diary=document.getElementById("diary").value.trim();
+
+  if(!hotel || !date){
+
+    alert("日付とホテル名を入力してください");
+
+    return;
+
+  }
+
+  db.stays.unshift({
+
+    id:Date.now(),
+
+    hotel,
+
+    city,
+
+    date,
+
+    diary
+
+  });
+
+  save();
+
+  document.getElementById("hotel").value="";
+
+  document.getElementById("city").value="";
+
+  document.getElementById("date").value="";
+
+  document.getElementById("diary").value="";
+
+  render();
+
+}
+
+function del(id){
+
+  if(!confirm("削除しますか？")) return;
+
+  db.stays=db.stays.filter(x=>x.id!==id);
+
+  save();
+
+  render();
+
+}
+
+function render(){
+
+  document.getElementById("stayCount").textContent=db.stays.length;
+
+  document.getElementById("cityCount").textContent=
+
+    new Set(db.stays.map(x=>x.city)).size;
+
+  document.getElementById("hotelCount").textContent=
+
+    new Set(db.stays.map(x=>x.hotel)).size;
+
+  document.getElementById("photoCount").textContent="0";
+
+  const list=document.getElementById("list");
+
+  if(db.stays.length===0){
+
+    list.innerHTML="<p class='small'>まだ登録がありません</p>";
+
+    return;
+
+  }
+
+  list.innerHTML=db.stays.map(x=>`
+
+    <div class="item">
+
+      <div class="row">
+
+        <b>${x.hotel}</b>
+
+        <span class="small">${x.date}</span>
+
+      </div>
+
+      <div class="small">${x.city||""}</div>
+
+      <div style="margin:8px 0">${x.diary||""}</div>
+
+      <button class="delete" onclick="del(${x.id})">削除</button>
+
+    </div>
+
+  `).join("");
+
+}
+
+load();
+
+</script>
+
+</body>
+
+</html>
