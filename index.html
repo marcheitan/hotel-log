@@ -351,7 +351,9 @@ if(file){
 
 }
 
-  function finish(){
+function finish(){
+
+  try{
 
     data.push(record);
 
@@ -362,6 +364,14 @@ if(file){
     load();
 
     alert("保存しました");
+
+  }catch(e){
+
+    alert("保存できません。写真が大きすぎます。");
+
+  }
+
+}
 
   }
 
