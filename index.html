@@ -402,59 +402,59 @@ function render(){
 load();
 
 </script>
+
+
+
 <script>
 
-const KEY = "hotel-log-data-v2";
+const KEY="hotel-log-v1";
 
-function save(){
+const date=document.querySelector('input[type="date"]');
 
-  const data = {
+const hotel=document.querySelector('input[placeholder="ホテル名"]');
 
-    date: document.getElementById("date").value,
+const city=document.querySelector('input[placeholder="京都市"]');
 
-    hotel: document.getElementById("hotel").value,
+const note=document.querySelector('textarea');
 
-    city: document.getElementById("city").value,
+const btn=document.querySelector('button');
 
-    note: document.getElementById("note").value
+(function(){
 
-  };
+ const s=localStorage.getItem(KEY);
 
-  localStorage.setItem(KEY, JSON.stringify(data));
+ if(!s)return;
 
-  alert("保存しました");
+ const d=JSON.parse(s);
 
-}
+ if(date)date.value=d.date||"";
 
-function load(){
+ if(hotel)hotel.value=d.hotel||"";
 
-  const s = localStorage.getItem(KEY);
+ if(city)city.value=d.city||"";
 
-  if(!s) return;
+ if(note)note.value=d.note||"";
 
-  const d = JSON.parse(s);
+})();
 
-  document.getElementById("date").value = d.date || "";
+btn.addEventListener("click",e=>{
 
-  document.getElementById("hotel").value = d.hotel || "";
+ e.preventDefault();
 
-  document.getElementById("city").value = d.city || "";
+ localStorage.setItem(KEY,JSON.stringify({
 
-  document.getElementById("note").value = d.note || "";
+  date:date?.value||"",
 
-}
+  hotel:hotel?.value||"",
 
-window.addEventListener("load", load);
+  city:city?.value||"",
 
-document.querySelector("button").onclick = function(e){
+  note:note?.value||""
 
-  e.preventDefault();
+ }));
 
-  save();
+ alert("保存しました");
 
-};
+});
 
 </script>
-</body>
-
-</html>
