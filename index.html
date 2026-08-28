@@ -1,5 +1,3 @@
-<escape>
-
 <!DOCTYPE html>
 
 <html lang="ja">
@@ -14,25 +12,147 @@
 
 <style>
 
-body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;margin:0;background:#f4f4f4}
+*{box-sizing:border-box}
 
-header{background:#1f2937;color:#fff;padding:16px;text-align:center}
+body{
 
-main{max-width:800px;margin:auto;padding:16px}
+  margin:0;
 
-.card{background:#fff;border-radius:12px;padding:14px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+  font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;
 
-input,textarea{width:100%;padding:10px;margin-top:6px;margin-bottom:12px;border:1px solid #ccc;border-radius:8px;box-sizing:border-box}
+  background:#f3f4f6;
 
-button{background:#2563eb;color:#fff;border:none;padding:12px 16px;border-radius:10px;font-weight:bold;width:100%}
+}
 
-.entry{border-top:1px solid #ddd;padding-top:12px;margin-top:12px}
+header{
 
-img{width:100%;border-radius:10px;margin-top:8px}
+  background:#111827;
 
-.small{color:#666;font-size:13px}
+  color:#fff;
 
-.delete{background:#dc2626;margin-top:8px}
+  padding:18px;
+
+  text-align:center;
+
+}
+
+main{
+
+  max-width:720px;
+
+  margin:auto;
+
+  padding:16px;
+
+}
+
+.card{
+
+  background:#fff;
+
+  border-radius:14px;
+
+  padding:16px;
+
+  margin-bottom:16px;
+
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+
+}
+
+label{
+
+  display:block;
+
+  margin-top:12px;
+
+  font-weight:600;
+
+}
+
+input,textarea{
+
+  width:100%;
+
+  padding:10px;
+
+  margin-top:6px;
+
+  border:1px solid #d1d5db;
+
+  border-radius:10px;
+
+  font-size:16px;
+
+}
+
+textarea{resize:vertical}
+
+button{
+
+  width:100%;
+
+  margin-top:16px;
+
+  padding:13px;
+
+  border:none;
+
+  border-radius:10px;
+
+  background:#2563eb;
+
+  color:#fff;
+
+  font-size:16px;
+
+  font-weight:bold;
+
+}
+
+.entry{
+
+  border-top:1px solid #e5e7eb;
+
+  padding-top:14px;
+
+  margin-top:14px;
+
+}
+
+.entry img{
+
+  width:100%;
+
+  border-radius:10px;
+
+  margin-top:10px;
+
+}
+
+.meta{
+
+  color:#6b7280;
+
+  font-size:14px;
+
+}
+
+.del{
+
+  background:#dc2626;
+
+}
+
+.empty{
+
+  color:#6b7280;
+
+  text-align:center;
+
+  padding:20px;
+
+}
 
 </style>
 
@@ -42,9 +162,9 @@ img{width:100%;border-radius:10px;margin-top:8px}
 
 <header>
 
-<h2>HOTEL LOG</h2>
+  <h2>HOTEL LOG</h2>
 
-<div>写真保存対応版</div>
+  <div>写真保存対応版</div>
 
 </header>
 
@@ -52,33 +172,33 @@ img{width:100%;border-radius:10px;margin-top:8px}
 
 <div class="card">
 
-<h3>新規登録</h3>
+  <h3>新規登録</h3>
 
-<label>ホテル名</label>
+  <label>ホテル名</label>
 
-<input id="hotel" placeholder="例：ホテル〇〇">
+  <input id="hotel" placeholder="ホテル名">
 
-<label>日付</label>
+  <label>利用日</label>
 
-<input id="date" type="date">
+  <input id="date" type="date">
 
-<label>メモ</label>
+  <label>メモ</label>
 
-<textarea id="memo" rows="4" placeholder="内容を入力"></textarea>
+  <textarea id="memo" rows="4"></textarea>
 
-<label>写真</label>
+  <label>写真</label>
 
-<input id="photo" type="file" accept="image/*">
+  <input id="photo" type="file" accept="image/*">
 
-<button onclick="save()">保存する</button>
+  <button id="saveBtn">保存する</button>
 
 </div>
 
 <div class="card">
 
-<h3>履歴</h3>
+  <h3>履歴</h3>
 
-<div id="list"></div>
+  <div id="list"></div>
 
 </div>
 
@@ -86,109 +206,173 @@ img{width:100%;border-radius:10px;margin-top:8px}
 
 <script>
 
-const KEY="hotel_log_data";
+const KEY="hotel_log_v2";
 
-function load(){
+const hotel=document.getElementById("hotel");
 
-  const data=JSON.parse(localStorage.getItem(KEY)||"[]");
+const date=document.getElementById("date");
 
-  const list=document.getElementById("list");
+const memo=document.getElementById("memo");
 
-  list.innerHTML="";
+const photo=document.getElementById("photo");
 
-  if(data.length===0){
+const list=document.getElementById("list");
 
-    list.innerHTML="<p class='small'>まだ記録はありません。</p>";
+document.getElementById("saveBtn").addEventListener("click",save);
 
-    return;
+function getData(){
 
-  }
+  return JSON.parse(localStorage.getItem(KEY)||"[]");
 
-  data.reverse().forEach((e,i)=>{
+}
 
-    const d=document.createElement("div");
+function setData(data){
 
-    d.className="entry";
+  localStorage.setItem(KEY,JSON.stringify(data));
 
-    d.innerHTML=`
+}
 
-      <strong>${e.hotel}</strong><br>
+function clearForm(){
 
-      <span class="small">${e.date}</span>
+  hotel.value="";
 
-      <p>${(e.memo||"").replace(/\n/g,"<br>")}</p>
+  date.value="";
 
-      ${e.photo?`<img src="${e.photo}">`:""}
+  memo.value="";
 
-      <button class="delete" onclick="removeItem(${data.length-1-i})">削除</button>
-
-    `;
-
-    list.appendChild(d);
-
-  });
+  photo.value="";
 
 }
 
 function save(){
 
-  const hotel=document.getElementById("hotel").value.trim();
+  if(hotel.value.trim()===""){
 
-  const date=document.getElementById("date").value;
+    alert("ホテル名を入力してください");
 
-  const memo=document.getElementById("memo").value;
+    return;
 
-  const file=document.getElementById("photo").files[0];
+  }
 
-  if(!hotel){alert("ホテル名を入力してください");return;}
+  const data=getData();
 
-  const reader=new FileReader();
+  const record={
 
-  reader.onload=function(){
+    hotel:hotel.value.trim(),
 
-    const data=JSON.parse(localStorage.getItem(KEY)||"[]");
+    date:date.value,
 
-    data.push({
+    memo:memo.value,
 
-      hotel,
-
-      date,
-
-      memo,
-
-      photo:file?reader.result:""
-
-    });
-
-    localStorage.setItem(KEY,JSON.stringify(data));
-
-    document.getElementById("hotel").value="";
-
-    document.getElementById("date").value="";
-
-    document.getElementById("memo").value="";
-
-    document.getElementById("photo").value="";
-
-    load();
+    photo:""
 
   };
 
-  if(file){reader.readAsDataURL(file);}
+  const file=photo.files[0];
 
-  else{reader.onload();}
+  if(file){
+
+    const reader=new FileReader();
+
+    reader.onload=function(e){
+
+      record.photo=e.target.result;
+
+      data.push(record);
+
+      setData(data);
+
+      clearForm();
+
+      load();
+
+      alert("保存しました");
+
+    };
+
+    reader.readAsDataURL(file);
+
+  }else{
+
+    data.push(record);
+
+    setData(data);
+
+    clearForm();
+
+    load();
+
+    alert("保存しました");
+
+  }
 
 }
 
 function removeItem(index){
 
-  const data=JSON.parse(localStorage.getItem(KEY)||"[]");
+  if(!confirm("削除しますか？")) return;
+
+  const data=getData();
 
   data.splice(index,1);
 
-  localStorage.setItem(KEY,JSON.stringify(data));
+  setData(data);
 
   load();
+
+}
+
+function load(){
+
+  const data=getData();
+
+  if(data.length===0){
+
+    list.innerHTML='<div class="empty">まだ記録はありません</div>';
+
+    return;
+
+  }
+
+  list.innerHTML="";
+
+  [...data].reverse().forEach((r,revIndex)=>{
+
+    const realIndex=data.length-1-revIndex;
+
+    const div=document.createElement("div");
+
+    div.className="entry";
+
+    div.innerHTML=`
+
+      <strong>${escapeHtml(r.hotel)}</strong><br>
+
+      <div class="meta">${r.date||""}</div>
+
+      <div style="margin-top:8px;white-space:pre-wrap;">${escapeHtml(r.memo)}</div>
+
+      ${r.photo?`<img src="${r.photo}">`:""}
+
+      <button class="del" onclick="removeItem(${realIndex})">削除</button>
+
+    `;
+
+    list.appendChild(div);
+
+  });
+
+}
+
+function escapeHtml(text){
+
+  return (text||"")
+
+    .replace(/&/g,"&amp;")
+
+    .replace(/</g,"&lt;")
+
+    .replace(/>/g,"&gt;");
 
 }
 
@@ -199,5 +383,3 @@ load();
 </body>
 
 </html>
-
-</escape>
